@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useRouteLoaderData } from "react-router";
 import { b, ems } from "~/lib/blanks";
 import { send, useChats } from "~/lib/chats";
 import { Composer } from "~/components/composer";
@@ -11,6 +11,7 @@ export default function Home() {
   const navigate = useNavigate();
   const chat = useChats().find((c) => c.id === id);
   const name = b("assistant.name");
+  const me = useRouteLoaderData("routes/shell") as { profile: { name: string } } | undefined;
 
   const onSend = (text: string, images: string[]) => {
     const next = send(chat?.id, text, images);
@@ -27,7 +28,7 @@ export default function Home() {
   if (!chat)
     return (
       <main id="page-home" className="dots flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10">
-        <p className="eyebrow">{name}</p>
+        <p className="eyebrow">{name}{me ? ` · ${me.profile.name}` : ""}</p>
         <h1 className="mt-5 max-w-[20ch] text-center text-h2 text-ink">
           {ems(b("assistant.greeting")).map((part, i) => (i % 2 ? <em key={i}>{part}</em> : part))}
         </h1>

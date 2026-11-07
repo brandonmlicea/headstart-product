@@ -10,3 +10,5 @@ export function b(key: Blank): string {
 }
 
 export const ems = (s: string) => s.split(/\*([^*]+)\*/);
+
+export const list = (key: Blank) => b(key).split(",").map((s) => s.trim()).filter(Boolean);

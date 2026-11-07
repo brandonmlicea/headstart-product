@@ -4,10 +4,10 @@
   "src": "app",
   "tokens": "app/tokens.css",
   "routes": {
+    "/welcome": "app/routes/welcome.tsx",
     "/": "app/routes/home.tsx",
     "/c/:id": "app/routes/home.tsx",
     "/brand": "app/routes/brand.tsx",
-    "/login": "app/routes/login.tsx",
     "/api/chat": "app/routes/api.chat.ts",
     "/api/transcribe": "app/routes/api.transcribe.ts"
   },
@@ -124,6 +124,103 @@
       "min": 10,
       "value": ""
     },
+    "onboard.title": {
+      "ask": "Welcome headline",
+      "hint": "The first thing people read when they open the app, four to eight words. Wrap the second half in *stars* to set it in the lighter grey.",
+      "kind": "text",
+      "max": 60,
+      "value": ""
+    },
+    "onboard.body": {
+      "ask": "Welcome sentence",
+      "hint": "One or two sentences on what the next few questions are for and how they help.",
+      "kind": "text",
+      "max": 200,
+      "min": 30,
+      "value": ""
+    },
+    "onboard.start": {
+      "ask": "Welcome button label",
+      "hint": "Two to four words on the button that starts the questions.",
+      "kind": "text",
+      "max": 22,
+      "value": ""
+    },
+    "onboard.name": {
+      "ask": "Name question",
+      "hint": "The question that asks what to call the person, as the assistant would ask it.",
+      "kind": "text",
+      "max": 60,
+      "value": ""
+    },
+    "onboard.1.question": {
+      "ask": "Question 1 (pick one)",
+      "hint": "A question with one answer that tells the assistant who it is helping, such as the person's role.",
+      "kind": "text",
+      "max": 70,
+      "value": ""
+    },
+    "onboard.1.options": {
+      "ask": "Question 1 answers",
+      "hint": "Three to five answers, separated by commas.",
+      "kind": "list",
+      "items": [
+        3,
+        5
+      ],
+      "itemMax": 40,
+      "value": ""
+    },
+    "onboard.2.question": {
+      "ask": "Question 2 (pick any)",
+      "hint": "A question people can answer with several picks, such as what they want help with.",
+      "kind": "text",
+      "max": 70,
+      "value": ""
+    },
+    "onboard.2.options": {
+      "ask": "Question 2 answers",
+      "hint": "Three to six answers, separated by commas.",
+      "kind": "list",
+      "items": [
+        3,
+        6
+      ],
+      "itemMax": 40,
+      "value": ""
+    },
+    "onboard.3.question": {
+      "ask": "Question 3 (pick one)",
+      "hint": "A last question with one answer, such as how they like to talk to the assistant.",
+      "kind": "text",
+      "max": 70,
+      "value": ""
+    },
+    "onboard.3.options": {
+      "ask": "Question 3 answers",
+      "hint": "Three to five answers, separated by commas.",
+      "kind": "list",
+      "items": [
+        3,
+        5
+      ],
+      "itemMax": 40,
+      "value": ""
+    },
+    "onboard.done": {
+      "ask": "Last step headline",
+      "hint": "Four to eight words shown above the safety line and the final button. Wrap the second half in *stars* to set it in the lighter grey.",
+      "kind": "text",
+      "max": 60,
+      "value": ""
+    },
+    "onboard.cta": {
+      "ask": "Final button label",
+      "hint": "Two to four words on the button that opens the app.",
+      "kind": "text",
+      "max": 22,
+      "value": ""
+    },
     "env.base": {
       "ask": "AI base URL",
       "hint": "An OpenAI-compatible API base, ending in /v1 (OpenAI, Groq, OpenRouter, Together, DeepInfra, Fireworks or your own). Saved to .env, never committed.",
@@ -150,20 +247,6 @@
       "kind": "text",
       "max": 120,
       "env": "AI_TRANSCRIBE_MODEL"
-    },
-    "env.passcode": {
-      "ask": "App passcode",
-      "hint": "The passcode that opens the private app. At least 8 characters. Saved to .env.",
-      "kind": "secret",
-      "env": "APP_PASSCODE",
-      "min": 8
-    },
-    "env.session": {
-      "ask": "Session secret",
-      "hint": "Signs the sign-in cookie. Generated for you on the first fill.",
-      "kind": "secret",
-      "env": "SESSION_SECRET",
-      "generate": true
     }
   }
 }

@@ -44,6 +44,8 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
     const i = (y * W + x) * 4;
     d[i] = r; d[i + 1] = g; d[i + 2] = b; d[i + 3] = a;
   };
+  const u = Math.max(1, Math.round(W / 320));
+  const blk = (x, y, c) => { for (let dy = 0; dy < u; dy++) for (let dx = 0; dx < u; dx++) set(x + dx, y + dy, c); };
   const dith = (x, y, t, colors) => {
     const v = Math.max(0, Math.min(0.9999, t)) * (colors.length - 1);
     const i = Math.floor(v);
@@ -53,7 +55,7 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
 
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) set(x, y, dith(x, y, y / Math.max(1, hy), S.sky));
 
-  if (S.stars) for (let i = 0; i < W * H * 0.004; i++) set(rand() * W, rand() * hy * 0.8, rand() > 0.7 ? "#ffffff" : "#9fb3e6");
+  if (S.stars) for (let i = 0; i < (W * H * 0.004) / (u * u); i++) blk(rand() * W, rand() * hy * 0.8, rand() > 0.7 ? "#ffffff" : "#9fb3e6");
   if (S.moon) { const mx = W * 0.78, my = H * 0.18, r = H * 0.07; for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) if (x * x + y * y <= r * r) set(mx + x, my + y, (x + r * 0.4) ** 2 + (y - r * 0.2) ** 2 < r * r * 0.5 ? "#f6efd2" : "#e4dcb8"); }
 
   const cloudCount = scene === "grass" ? 0 : scene === "night" || scene === "sky" ? 2 : scene === "field" ? 4 : 6;
@@ -70,31 +72,32 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
         let inside = false;
         for (const b of blobs) if ((x - b.x) ** 2 + (y - b.y) ** 2 <= b.r * b.r) { inside = true; break; }
         if (!inside) continue;
-        const t = (y - top) / (base - top) + (edge(Math.abs(x - cx) / 6) - 0.5) * 0.35;
+        const t = (y - top) / (base - top) + (edge(Math.abs(x - cx) / (6 * u)) - 0.5) * 0.35;
         set(x, y, dith(x, y, t * 1.05, S.cloud));
       }
   }
 
   if (S.buildings) {
-    let x = Math.floor(W * 0.12);
-    const clinic = Math.floor(W * (0.3 + rand() * 0.2));
-    while (x < W * 0.78) {
-      const bw = 3 + Math.floor(rand() * 6), bh = 3 + Math.floor(rand() * (H * 0.09));
-      const tall = rand() > 0.88 ? H * 0.12 : 0;
+    const Wc = W / u, Hc = H / u, hc = Math.round(hy / u);
+    let x = Math.floor(Wc * 0.12);
+    const clinic = Math.floor(Wc * (0.3 + rand() * 0.2));
+    while (x < Wc * 0.78) {
+      const bw = 3 + Math.floor(rand() * 6), bh = 3 + Math.floor(rand() * (Hc * 0.09));
+      const tall = rand() > 0.88 ? Math.round(Hc * 0.12) : 0;
       const col = S.town[Math.floor(rand() * S.town.length)];
-      for (let yy = hy - bh - tall; yy < hy; yy++) for (let xx = x; xx < x + bw; xx++) {
-        const win = (xx - x) % 2 === 1 && (yy - (hy - bh - tall)) % 3 === 1 && yy < hy - 1;
-        set(xx, yy, win ? (S.lights && rand() > 0.4 ? "#ffd98a" : S.town[2]) : col);
+      for (let yy = hc - bh - tall; yy < hc; yy++) for (let xx = x; xx < x + bw; xx++) {
+        const win = (xx - x) % 2 === 1 && (yy - (hc - bh - tall)) % 3 === 1 && yy < hc - 1;
+        blk(xx * u, yy * u, win ? (S.lights && rand() > 0.4 ? "#ffd98a" : S.town[2]) : col);
       }
-      if (tall) for (let yy = hy - bh - tall - 4; yy < hy - bh - tall; yy++) set(x + Math.floor(bw / 2), yy, S.town[0]);
+      if (tall) for (let yy = hc - bh - tall - 4; yy < hc - bh - tall; yy++) blk((x + Math.floor(bw / 2)) * u, yy * u, S.town[0]);
       if (props !== "plain" && Math.abs(x - clinic) < 6) {
-        const top = hy - 9, left = x;
-        for (let yy = top; yy < hy; yy++) for (let xx = left; xx < left + 9; xx++) set(xx, yy, "#f4f1ea");
+        const top = hc - 9, left = x;
+        for (let yy = top; yy < hc; yy++) for (let xx = left; xx < left + 9; xx++) blk(xx * u, yy * u, "#f4f1ea");
         if (props === "learning") {
-          for (let yy = top - 7; yy < top; yy++) set(left + 1, yy, "#6b6b6b");
-          for (let i = 0; i < 3; i++) for (let k = 0; k <= 2 - i; k++) set(left + 2 + k, top - 7 + i, accent), set(left + 2 + k, top - 3 - i, accent);
-          for (let xx = left + 1; xx < left + 8; xx += 2) for (let yy = top + 2; yy < hy - 1; yy += 3) set(xx, yy, "#a9c2dc");
-        } else for (let i = -1; i <= 1; i++) { set(left + 4 + i, top + 3, "#d8433f"); set(left + 4, top + 3 + i, "#d8433f"); }
+          for (let yy = top - 7; yy < top; yy++) blk((left + 1) * u, yy * u, "#6b6b6b");
+          for (let i = 0; i < 3; i++) for (let k = 0; k <= 2 - i; k++) { blk((left + 2 + k) * u, (top - 7 + i) * u, accent); blk((left + 2 + k) * u, (top - 3 - i) * u, accent); }
+          for (let xx = left + 1; xx < left + 8; xx += 2) for (let yy = top + 2; yy < hc - 1; yy += 3) blk(xx * u, yy * u, "#a9c2dc");
+        } else for (let i = -1; i <= 1; i++) { blk((left + 4 + i) * u, (top + 3) * u, "#d8433f"); blk((left + 4) * u, (top + 3 + i) * u, "#d8433f"); }
         x += 10;
       }
       x += bw + (rand() > 0.6 ? 1 : 0);
@@ -111,7 +114,7 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
       const t0 = Math.round(top(x));
       for (let y = t0; y < H; y++) {
         const shade = (y - t0) / (H - t0 + 1);
-        const c = y === t0 ? S.hills[Math.max(0, l - 1)] : rand() < 0.015 ? S.dark : shade > 0.6 && l === layers - 1 && BAYER[(y & 3) * 4 + (x & 3)] < 0.3 ? S.dark : S.hills[l];
+        const c = y - t0 < u ? S.hills[Math.max(0, l - 1)] : rand() < 0.015 / u ? S.dark : shade > 0.6 && l === layers - 1 && BAYER[(y & 3) * 4 + (x & 3)] < 0.3 ? S.dark : S.hills[l];
         set(x, y, c);
       }
     }
@@ -126,20 +129,20 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
   }
 
   if (S.field || S.flowers) {
-    const count = S.field ? W * H * 0.02 : W * H * 0.006;
+    const count = (S.field ? W * H * 0.02 : W * H * 0.006) / (u * u);
     for (let i = 0; i < count; i++) {
       const x = rand() * W, y = hy + (H - hy) * (0.15 + 0.85 * rand() ** 0.7);
       const big = S.field && rand() > 0.82, col = S.flowers[Math.floor(rand() * S.flowers.length)];
       if (big) {
-        for (let k = 0; k < 8; k++) set(x + Math.round(Math.cos(k * 0.785) * 2), y + Math.round(Math.sin(k * 0.785) * 2), "#f4c430");
-        set(x, y, "#6b3f1f"); set(x + 1, y, "#6b3f1f"); set(x, y + 1, "#4b2c16");
-        for (let s = 3; s < 8; s++) set(x, y + s, S.hills[2]);
+        for (let k = 0; k < 8; k++) blk(x + Math.round(Math.cos(k * 0.785) * 2) * u, y + Math.round(Math.sin(k * 0.785) * 2) * u, "#f4c430");
+        blk(x, y, "#6b3f1f"); blk(x + u, y, "#6b3f1f"); blk(x, y + u, "#4b2c16");
+        for (let s = 3; s < 8; s++) blk(x, y + s * u, S.hills[2]);
       } else {
-        set(x, y, col); set(x - 1, y, col); set(x + 1, y, col); set(x, y - 1, col); set(x, y + 1, col);
-        set(x, y, "#e9b53a");
+        blk(x, y, col); blk(x - u, y, col); blk(x + u, y, col); blk(x, y - u, col); blk(x, y + u, col);
+        blk(x, y, "#e9b53a");
       }
     }
-    for (let i = 0; i < W * H * 0.01; i++) { const x = rand() * W, y = hy + 3 + rand() * (H - hy); set(x, y, S.dark); set(x, y - 1, S.hills[1]); }
+    for (let i = 0; i < (W * H * 0.01) / (u * u); i++) { const x = rand() * W, y = hy + 3 * u + rand() * (H - hy); blk(x, y, S.dark); blk(x, y - u, S.hills[1]); }
   }
 
   const tree = (tx, ty, size, side) => {
@@ -152,7 +155,7 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
       for (const b of blobs) if ((x - b.x) ** 2 + (y - b.y) ** 2 <= b.r * b.r) { inside = true; break; }
       if (!inside) continue;
       const t = ((y - minY) / (maxY - minY)) * 0.7 + ((x - (tx - size)) / (2 * size)) * 0.3;
-      set(x, y, rand() < 0.06 ? S.leaf[3] : dith(x, y, t, S.leaf));
+      set(x, y, rand() < 0.06 / u ? S.leaf[3] : dith(x, y, t, S.leaf));
     }
   };
   if (S.tree) tree(W * 0.86, H * 0.84, H * 0.42, 1);
@@ -162,11 +165,11 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
   const shade = (k) => [ar * k, ag * k, ab * k].map((v) => Math.min(255, Math.round(v)));
   if (S.bag && props === "care") {
     const bx = Math.round(W * 0.6), by = Math.round(H * 0.8), bw = Math.round(W * 0.07), bh = Math.round(bw * 0.62);
-    for (let y = by - 3; y < by; y++) for (let x = bx + bw * 0.3; x < bx + bw * 0.7; x++) if (y === by - 3 || x < bx + bw * 0.3 + 1 || x >= bx + bw * 0.7 - 1) set(x, y, shade(0.45));
+    for (let y = by - 3 * u; y < by; y++) for (let x = bx + bw * 0.3; x < bx + bw * 0.7; x++) if (y < by - 2 * u || x < bx + bw * 0.3 + u || x >= bx + bw * 0.7 - u) set(x, y, shade(0.45));
     for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) set(x, y, y === by ? shade(1.15) : x > bx + bw * 0.8 ? shade(0.7) : shade(0.9));
     const cx = bx + Math.floor(bw / 2), cy = by + Math.floor(bh / 2);
-    for (let i = -2; i <= 2; i++) { set(cx + i, cy, "#f4f1ea"); set(cx, cy + i, "#f4f1ea"); }
-    for (let x = bx + 1; x < bx + bw + 3; x++) set(x, by + bh, "#24451f");
+    for (let i = -2; i <= 2; i++) { blk(cx + i * u, cy, "#f4f1ea"); blk(cx, cy + i * u, "#f4f1ea"); }
+    for (let x = bx + 1; x < bx + bw + 3 * u; x++) for (let k = 0; k < u; k++) set(x, by + bh + k, "#24451f");
   }
   if (S.bag && props === "learning") {
     const bx = Math.round(W * 0.6), by = Math.round(H * 0.82), bw = Math.round(W * 0.07);

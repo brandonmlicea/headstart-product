@@ -1,8 +1,8 @@
 import type { Route } from "./+types/api.transcribe";
-import { ai, missingEnv, signedIn } from "~/lib/env.server";
+import { ai, missingEnv, profileOf } from "~/lib/env.server";
 
 export async function action({ request }: Route.ActionArgs) {
-  if (!(await signedIn(request))) return new Response("Sign in first.", { status: 401 });
+  if (!(await profileOf(request))) return new Response("Finish the welcome questions first.", { status: 401 });
   const cfg = ai();
   const gaps = missingEnv(["AI_BASE_URL", "AI_API_KEY", "AI_TRANSCRIBE_MODEL"]);
   if (gaps.length) return new Response(gaps.join("\n"), { status: 503 });

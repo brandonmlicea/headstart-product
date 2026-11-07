@@ -8,7 +8,7 @@ This repo is a template for the private side of a healthcare startup: a signed-i
 2. Write every answer into one JSON file of `{"key": "value"}` and run `./fill --from answers.json`. MCP tool: `fill`.
 3. Rejected answers come back with the reason. Generic filler (Lorem ipsum, John Doe, Acme, example.com, TBD, TODO, "optional", "REQUIRED:", `{{...}}`) is refused. Write the real thing, or ask the person.
 4. `./fill check` until it prints `ready`. `pnpm build` runs the same check first.
-5. `pnpm dev`, open http://localhost:5173, sign in with the passcode. Running both sites locally, set `link.landing` to `http://localhost:4321`.
+5. `pnpm dev`, open http://localhost:5173 and answer the welcome questions. Running both sites locally, set `link.landing` to `http://localhost:4321`.
 6. `pnpm check` runs the blanks check plus `react-router typegen` and `tsc`.
 
 `/brand` (palette in every format and the contrast table) is linked from the rail only in `pnpm dev`; it stays reachable by URL in production.
@@ -23,10 +23,12 @@ Blanks under `env.*` are written to `.env` (git-ignored), never to `blanks.json`
 | `env.key` | `AI_API_KEY` | Its key |
 | `env.model` | `AI_MODEL` | A chat model that also reads images |
 | `env.transcribe` | `AI_TRANSCRIBE_MODEL` | A speech-to-text model served at `/audio/transcriptions` |
-| `env.passcode` | `APP_PASSCODE` | The passcode that opens the app |
-| `env.session` | `SESSION_SECRET` | Generated on the first fill |
 
-`pnpm dev` and `pnpm start` both read `.env` on every request, so a changed key takes effect without a restart. In production set the same names as environment variables instead. `SESSION_SECRET` is generated the first time anything is filled, including through the landing's pair. Until they are set, the sign-in page and the chat print exactly which blank is missing.
+`pnpm dev` and `pnpm start` both read `.env` on every request, so a changed key takes effect without a restart. In production set the same names as environment variables instead. Until they are set, the chat prints exactly which blank is missing.
+
+## Welcome (onboarding)
+
+There is no passcode. `/welcome` asks a first-time visitor six short steps, all written as blanks: `onboard.title` and `onboard.body` (welcome), `onboard.name` (their name), `onboard.1.*` (pick one), `onboard.2.*` (pick any), `onboard.3.*` (pick one), then `onboard.done` with the safety line (`assistant.disclaimer`) they must tick. The answers live in an `__profile` cookie (`app/lib/env.server.ts`): the shell sends anyone without it to `/welcome`, `/api/chat` and `/api/transcribe` refuse requests without it, and `/api/chat` adds the answers to the system prompt. The rail's name row reopens the answers; Start over clears them. Without sign-in anyone with the URL can use the AI key, so put a deployed app behind your host's protection or add accounts before sharing it.
 
 ## Taking template updates
 
@@ -68,7 +70,7 @@ Chats live in the browser (`app/lib/chats.ts`, localStorage). Swap in a database
 
 | Route | File |
 | --- | --- |
-| `/login` | `app/routes/login.tsx` (passcode, cookie session in `app/lib/env.server.ts`) |
+| `/welcome` | `app/routes/welcome.tsx` (onboarding; the profile cookie lives in `app/lib/env.server.ts`), `/restart` clears it |
 | `/`, `/c/:id` | `app/routes/home.tsx` (empty state, thread, composer) inside `app/routes/shell.tsx` (the rail) |
 | `/brand` | `app/routes/brand.tsx` |
 | `/api/chat`, `/api/transcribe` | `app/routes/api.chat.ts`, `app/routes/api.transcribe.ts` |

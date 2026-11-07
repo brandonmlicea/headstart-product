@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { Form, Link, NavLink, Outlet, useLocation } from "react-router";
 import type { Route } from "./+types/shell";
-import { requireIn } from "~/lib/env.server";
+import { requireProfile } from "~/lib/env.server";
 import { b } from "~/lib/blanks";
 import { remove, useChats } from "~/lib/chats";
 import { Icon } from "~/components/icon";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  await requireIn(request);
-  return null;
+  return { profile: await requireProfile(request) };
 }
 
 const THEMES = ["system", "light", "dark"] as const;
@@ -32,7 +31,7 @@ function ThemeButton() {
 const row = ({ isActive }: { isActive: boolean }) =>
   `group flex items-center gap-2 rounded-lg border px-2.5 py-2 text-[13px] transition ${isActive ? "border-line bg-raised text-ink shadow-[0_1px_2px_oklch(0_0_0/0.05)]" : "border-transparent text-body hover:bg-ink/5"}`;
 
-export default function Shell() {
+export default function Shell({ loaderData }: Route.ComponentProps) {
   const chats = useChats();
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
@@ -63,8 +62,9 @@ export default function Shell() {
         <div className="space-y-0.5 border-t border-line pt-2">
           {import.meta.env.DEV && <NavLink id="rail-brand" to="/brand" className={row}><Icon name="palette" className="size-4" /> Brand and contrast</NavLink>}
           <ThemeButton />
-          <Form method="post" action="/logout">
-            <button id="rail-sign-out" className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] text-body transition hover:bg-ink/5"><Icon name="out" className="size-4" /> Sign out</button>
+          <NavLink id="rail-answers" to="/welcome" className={row}><span className="grid size-4 place-items-center rounded-full bg-surface font-mono text-[9px] text-ink">{loaderData.profile.name.slice(0, 1).toUpperCase()}</span> {loaderData.profile.name}<span className="ml-auto font-mono text-[11px] text-muted">edit</span></NavLink>
+          <Form method="post" action="/restart">
+            <button id="rail-restart" className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] text-body transition hover:bg-ink/5"><Icon name="out" className="size-4" /> Start over</button>
           </Form>
         </div>
       </aside>

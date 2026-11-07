@@ -8,5 +8,5 @@ export function Pixel({ scene, w = 160, h = 120, seed = 7, dissolve = "", classN
   useEffect(() => {
     if (ref.current) paint(ref.current, { scene, width: w, height: h, seed, dissolve });
   }, [scene, w, h, seed, dissolve]);
-  return <canvas ref={ref} width={w} height={h} aria-hidden="true" className={`pixel block ${className}`} />;
+  return <canvas ref={ref} width={w} height={h} aria-hidden="true" className={`block ${className}`} />;
 }
