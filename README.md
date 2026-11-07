@@ -15,8 +15,10 @@ mkdir my-startup && cd my-startup
 git clone --depth 1 https://github.com/brandonmlicea/headstart-landing landing
 git clone --depth 1 https://github.com/brandonmlicea/headstart-product product
 cd product && pnpm install
-./fill            # walk the form in the terminal
-pnpm dev          # http://localhost:5173
+./fill list                  # every blank still REQUIRED
+./fill --from answers.json   # fill them all at once (agents)
+./fill                       # or walk the form by hand (people, in a terminal)
+pnpm dev                     # http://localhost:5173
 ```
 
 Or press **Use this template** on GitHub for your own copy.
@@ -46,7 +48,7 @@ Tools: `blanks`, `fill`, `check`, `map`, `sync`, `palette`, `convert`, `contrast
 
 ## Deploy
 
-`pnpm build && pnpm start` runs a Node server on `PORT` (default 3000). Set `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`, `AI_TRANSCRIBE_MODEL`, `APP_PASSCODE` and `SESSION_SECRET` in the host's environment.
+`pnpm build && pnpm start` runs a Node server on `PORT` (default 3000). `pnpm start` also reads `.env` in the working folder. On a host, set `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`, `AI_TRANSCRIBE_MODEL`, `APP_PASSCODE` and `SESSION_SECRET` in the host's environment.
 
 ## For agents
 

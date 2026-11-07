@@ -8,7 +8,10 @@ This repo is a template for the private side of a healthcare startup: a signed-i
 2. Write every answer into one JSON file of `{"key": "value"}` and run `./fill --from answers.json`. MCP tool: `fill`.
 3. Rejected answers come back with the reason. Generic filler (Lorem ipsum, John Doe, Acme, example.com, TBD, TODO, "optional", "REQUIRED:", `{{...}}`) is refused. Write the real thing, or ask the person.
 4. `./fill check` until it prints `ready`. `pnpm build` runs the same check first.
-5. `pnpm dev`, open http://localhost:5173, sign in with the passcode.
+5. `pnpm dev`, open http://localhost:5173, sign in with the passcode. Running both sites locally, set `link.landing` to `http://localhost:4321`.
+6. `pnpm check` runs the blanks check plus `react-router typegen` and `tsc`.
+
+`/brand` (palette in every format and the contrast table) is linked from the rail only in `pnpm dev`; it stays reachable by URL in production.
 
 ## Secrets
 
@@ -23,7 +26,7 @@ Blanks under `env.*` are written to `.env` (git-ignored), never to `blanks.json`
 | `env.passcode` | `APP_PASSCODE` | The passcode that opens the app |
 | `env.session` | `SESSION_SECRET` | Generated on the first fill |
 
-In production set the same names as environment variables. Until they are set, the sign-in page and the chat print exactly which blank is missing.
+`pnpm dev` and `pnpm start` both read `.env` on every request, so a changed key takes effect without a restart. In production set the same names as environment variables instead. `SESSION_SECRET` is generated the first time anything is filled, including through the landing's pair. Until they are set, the sign-in page and the chat print exactly which blank is missing.
 
 ## The pair
 

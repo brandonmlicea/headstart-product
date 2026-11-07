@@ -65,7 +65,7 @@ export default function Shell() {
           ))}
         </nav>
         <div className="space-y-0.5 border-t border-line pt-3">
-          <NavLink id="rail-brand" to="/brand" className={row}><Icon name="palette" /> Brand and contrast</NavLink>
+          {import.meta.env.DEV && <NavLink id="rail-brand" to="/brand" className={row}><Icon name="palette" /> Brand and contrast</NavLink>}
           <ThemeButton />
           <Form method="post" action="/logout">
             <button id="rail-sign-out" className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition hover:bg-ink/5"><Icon name="out" /> Sign out</button>

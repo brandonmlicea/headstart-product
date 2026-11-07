@@ -37,7 +37,18 @@
       "ask": "Color format",
       "hint": "How the generated tokens are written in CSS. Shared with the landing.",
       "kind": "format",
-      "value": ""
+      "value": "",
+      "options": [
+        "hex",
+        "rgb",
+        "srgb",
+        "hsl",
+        "oklch",
+        "oklab",
+        "lab",
+        "lch",
+        "p3"
+      ]
     },
     "link.email": {
       "ask": "Support email",
@@ -47,7 +58,7 @@
     },
     "link.landing": {
       "ask": "Landing URL",
-      "hint": "The full address of the public landing page (the headstart-landing repo).",
+      "hint": "The full address of the public landing page. Running both on this computer: http://localhost:4321.",
       "kind": "url",
       "value": ""
     },
@@ -60,7 +71,7 @@
     },
     "assistant.role": {
       "ask": "Assistant instructions",
-      "hint": "The system prompt: who it helps, what it does with voice and photos, what it must never do, when it sends people to a clinician or emergency services. At least 80 characters.",
+      "hint": "The system prompt: who it helps, what it does with voice and photos, what it must never do, and when it sends people to a professional or emergency services. At least 80 characters.",
       "kind": "text",
       "max": 2400,
       "min": 80,
@@ -91,7 +102,7 @@
     },
     "starter.1": {
       "ask": "Starter prompt 1",
-      "hint": "A first message people can tap. Write it as the patient or caregiver would say it.",
+      "hint": "A first message people can tap, written the way your user would say it.",
       "kind": "text",
       "max": 90,
       "min": 10,
@@ -99,7 +110,7 @@
     },
     "starter.2": {
       "ask": "Starter prompt 2",
-      "hint": "A first message people can tap. Write it as the patient or caregiver would say it.",
+      "hint": "A first message people can tap, written the way your user would say it.",
       "kind": "text",
       "max": 90,
       "min": 10,
@@ -107,7 +118,7 @@
     },
     "starter.3": {
       "ask": "Starter prompt 3",
-      "hint": "A first message people can tap. Write it as the patient or caregiver would say it.",
+      "hint": "A first message people can tap, written the way your user would say it.",
       "kind": "text",
       "max": 90,
       "min": 10,
