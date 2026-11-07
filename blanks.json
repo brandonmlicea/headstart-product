@@ -1,0 +1,158 @@
+{
+  "site": "product",
+  "pair": "../landing",
+  "src": "app",
+  "tokens": "app/tokens.css",
+  "routes": {
+    "/": "app/routes/home.tsx",
+    "/c/:id": "app/routes/home.tsx",
+    "/brand": "app/routes/brand.tsx",
+    "/login": "app/routes/login.tsx",
+    "/api/chat": "app/routes/api.chat.ts",
+    "/api/transcribe": "app/routes/api.transcribe.ts"
+  },
+  "blanks": {
+    "brand.name": {
+      "ask": "Brand name",
+      "hint": "The company name shown in the rail, the sign-in page and the title. Shared with the landing.",
+      "kind": "text",
+      "max": 28,
+      "value": ""
+    },
+    "brand.tagline": {
+      "ask": "Brand tagline",
+      "hint": "One line that says what you do and for whom. Shared with the landing.",
+      "kind": "text",
+      "max": 120,
+      "min": 20,
+      "value": ""
+    },
+    "brand.color": {
+      "ask": "Brand color",
+      "hint": "Any CSS color: hex, rgb(), hsl(), oklch(), oklab(), lab(), lch(), color(srgb ...) or color(display-p3 ...). Shared with the landing; every other color is derived from it and checked for AA contrast.",
+      "kind": "color",
+      "value": ""
+    },
+    "brand.format": {
+      "ask": "Color format",
+      "hint": "How the generated tokens are written in CSS. Shared with the landing.",
+      "kind": "format",
+      "value": ""
+    },
+    "link.email": {
+      "ask": "Support email",
+      "hint": "Shown on the sign-in page and in the disclaimer. Shared with the landing.",
+      "kind": "email",
+      "value": ""
+    },
+    "link.landing": {
+      "ask": "Landing URL",
+      "hint": "The full address of the public landing page (the headstart-landing repo).",
+      "kind": "url",
+      "value": ""
+    },
+    "assistant.name": {
+      "ask": "Assistant name",
+      "hint": "What the assistant is called in the chat, one or two words.",
+      "kind": "text",
+      "max": 24,
+      "value": ""
+    },
+    "assistant.role": {
+      "ask": "Assistant instructions",
+      "hint": "The system prompt: who it helps, what it does with voice and photos, what it must never do, when it sends people to a clinician or emergency services. At least 80 characters.",
+      "kind": "text",
+      "max": 2400,
+      "min": 80,
+      "value": ""
+    },
+    "assistant.greeting": {
+      "ask": "Empty chat headline",
+      "hint": "Shown above the composer before the first message. Wrap the one or two words to set in italics in *stars*.",
+      "kind": "text",
+      "max": 60,
+      "value": ""
+    },
+    "assistant.intro": {
+      "ask": "Empty chat sentence",
+      "hint": "One sentence under the headline that says what people can ask, say or show.",
+      "kind": "text",
+      "max": 160,
+      "min": 20,
+      "value": ""
+    },
+    "assistant.disclaimer": {
+      "ask": "Safety line",
+      "hint": "Shown under the composer on every chat: what the assistant is not, and where to go in an emergency.",
+      "kind": "text",
+      "max": 180,
+      "min": 30,
+      "value": ""
+    },
+    "starter.1": {
+      "ask": "Starter prompt 1",
+      "hint": "A first message people can tap. Write it as the patient or caregiver would say it.",
+      "kind": "text",
+      "max": 90,
+      "min": 10,
+      "value": ""
+    },
+    "starter.2": {
+      "ask": "Starter prompt 2",
+      "hint": "A first message people can tap. Write it as the patient or caregiver would say it.",
+      "kind": "text",
+      "max": 90,
+      "min": 10,
+      "value": ""
+    },
+    "starter.3": {
+      "ask": "Starter prompt 3",
+      "hint": "A first message people can tap. Write it as the patient or caregiver would say it.",
+      "kind": "text",
+      "max": 90,
+      "min": 10,
+      "value": ""
+    },
+    "env.base": {
+      "ask": "AI base URL",
+      "hint": "An OpenAI-compatible API base, ending in /v1 (OpenAI, Groq, OpenRouter, Together, DeepInfra, Fireworks or your own). Saved to .env, never committed.",
+      "kind": "url",
+      "env": "AI_BASE_URL"
+    },
+    "env.key": {
+      "ask": "AI API key",
+      "hint": "The key for that API. Saved to .env, never committed.",
+      "kind": "secret",
+      "env": "AI_API_KEY",
+      "min": 8
+    },
+    "env.model": {
+      "ask": "AI chat model",
+      "hint": "A chat model id on that API that also reads images, for photos and handwriting.",
+      "kind": "text",
+      "max": 120,
+      "env": "AI_MODEL"
+    },
+    "env.transcribe": {
+      "ask": "AI transcription model",
+      "hint": "A speech-to-text model id on that API for the microphone (served at /audio/transcriptions).",
+      "kind": "text",
+      "max": 120,
+      "env": "AI_TRANSCRIBE_MODEL"
+    },
+    "env.passcode": {
+      "ask": "App passcode",
+      "hint": "The passcode that opens the private app. At least 8 characters. Saved to .env.",
+      "kind": "secret",
+      "env": "APP_PASSCODE",
+      "min": 8
+    },
+    "env.session": {
+      "ask": "Session secret",
+      "hint": "Signs the sign-in cookie. Generated for you on the first fill.",
+      "kind": "secret",
+      "env": "SESSION_SECRET",
+      "generate": true
+    }
+  }
+}

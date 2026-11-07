@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "headstart": { "command": "node", "args": ["kit/mcp.mjs"] }
+  }
+}

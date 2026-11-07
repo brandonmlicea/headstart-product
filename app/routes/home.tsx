@@ -1,0 +1,54 @@
+import { useNavigate, useParams } from "react-router";
+import { b, ems } from "~/lib/blanks";
+import { send, useChats } from "~/lib/chats";
+import { Composer } from "~/components/composer";
+import { Thread } from "~/components/thread";
+
+const STARTERS = [b("starter.1"), b("starter.2"), b("starter.3")];
+
+export default function Home() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const chat = useChats().find((c) => c.id === id);
+  const name = b("assistant.name");
+
+  const onSend = (text: string, images: string[]) => {
+    const next = send(chat?.id, text, images);
+    if (next !== id) navigate(`/c/${next}`);
+  };
+
+  const composer = (
+    <>
+      <Composer placeholder={`Ask ${name}, talk, or add a photo`} busy={!!chat?.busy} onSend={onSend} />
+      <p id="chat-disclaimer" className="mx-auto mt-2 max-w-2xl px-2 text-center text-xs text-muted">{b("assistant.disclaimer")}</p>
+    </>
+  );
+
+  if (!chat)
+    return (
+      <main id="page-home" className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10">
+        <h1 className="max-w-[18ch] text-center text-h2">
+          {ems(b("assistant.greeting")).map((part, i) => (i % 2 ? <em key={i}>{part}</em> : part))}
+        </h1>
+        <p className="mt-4 max-w-md text-center text-muted">{id ? "This chat is not on this device. Start a new one below." : b("assistant.intro")}</p>
+        <div className="mt-10 w-full">{composer}</div>
+        <div id="starters" className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-2">
+          {STARTERS.map((s) => (
+            <button key={s} onClick={() => onSend(s, [])} className="rounded-full border border-line px-4 py-2 text-sm transition hover:bg-surface">{s}</button>
+          ))}
+        </div>
+      </main>
+    );
+
+  return (
+    <main id="page-chat" className="flex min-h-0 flex-1 flex-col">
+      <header id="chat-title" className="flex h-12 shrink-0 items-center border-b border-line px-6 text-sm">
+        <span className="truncate">{chat.title}</span>
+      </header>
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <Thread messages={chat.messages} name={name} busy={!!chat.busy} />
+      </div>
+      <div className="shrink-0 px-4 pb-4">{composer}</div>
+    </main>
+  );
+}

@@ -1,0 +1,43 @@
+{
+  "name": "headstart-product",
+  "description": "Agent-native healthcare product template: React Router, a multimodal care assistant (text, voice, photos), a fill-in-the-blanks form and an MCP server.",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "headstart": "kit/cli.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node kit/cli.mjs tokens >/dev/null && react-router dev",
+    "build": "node kit/cli.mjs check && react-router build",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc",
+    "fill": "node kit/cli.mjs",
+    "check": "node kit/cli.mjs check && react-router typegen && tsc",
+    "mcp": "node kit/cli.mjs mcp"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@react-router/node": "^8.5.1",
+    "@react-router/serve": "^8.5.1",
+    "isbot": "^5.2.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "^8.5.1"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^8.5.1",
+    "@tailwindcss/vite": "^4.3.4",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.4",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.6"
+  }
+}
