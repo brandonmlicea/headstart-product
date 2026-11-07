@@ -106,8 +106,7 @@ switch (cmd) {
   case "sync": { const r = sync(site, flag("--push")); r.error ? console.log(r.error) : report(r); break; }
   case "map": show(map(site)); break;
   case "export": {
-    const out = JSON.stringify(Object.fromEntries(Object.entries(site.form.blanks).filter(([, f]) => !f.env && f.value).map(([k, f]) => [k, f.value])), null, 2) + "
-";
+    const out = JSON.stringify(Object.fromEntries(Object.entries(site.form.blanks).filter(([, f]) => !f.env && f.value).map(([k, f]) => [k, f.value])), null, 2) + "\n";
     if (rest[0]) { writeFileSync(rest[0], out); console.log(`saved ${rest[0]}`); } else process.stdout.write(out);
     break;
   }
