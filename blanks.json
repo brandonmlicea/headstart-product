@@ -16,7 +16,7 @@
       "ask": "Brand name",
       "hint": "The company name shown in the rail, the sign-in page and the title. Shared with the landing.",
       "kind": "text",
-      "max": 28,
+      "max": 24,
       "value": ""
     },
     "brand.tagline": {

@@ -28,7 +28,7 @@ function printForm(gaps) {
   if (!gaps.length) return console.log(`${site.form.site}: every blank is filled.`);
   console.log(`${site.form.site}: ${gaps.length} blank(s) REQUIRED. Fill each with real words, never filler:\n`);
   for (const g of gaps) {
-    console.log(`  ${g.key}${g.env ? `  (.env ${g.env})` : ""}\n    ask:  ${g.ask}${g.hint ? `\n    hint: ${g.hint}` : ""}${g.max ? `\n    max:  ${g.max} chars` : ""}${g.options ? `\n    one of: ${g.options.join(", ")}` : ""}${g.items ? `\n    items: ${g.items[0]}, comma separated${g.itemMax ? `, each at most ${g.itemMax} characters` : ""}` : ""}`);
+    console.log(`  ${g.key}${g.env ? `  (.env ${g.env})` : ""}\n    ask:  ${g.ask}${g.hint ? `\n    hint: ${g.hint}` : ""}${g.max ? `\n    length: ${g.min ? `${g.min} to ${g.max}` : `up to ${g.max}`} chars` : g.min ? `\n    length: at least ${g.min} chars` : ""}${g.options ? `\n    one of: ${g.options.join(", ")}` : ""}${g.items ? `\n    items: ${g.items[0]}, comma separated${g.itemMax ? `, each at most ${g.itemMax} characters` : ""}` : ""}`);
   }
   console.log(`\nFill them: ./fill key="value" key2="value"   or   ./fill --from answers.json`);
 }

@@ -15,16 +15,16 @@ export function missingEnv(names: string[]) {
   return fields.filter(([, f]) => names.includes(f.env!) && !env(f.env!)).map(([key, f]) => `REQUIRED: ${f.ask} (${f.env}). Run ./fill ${key}="..."`);
 }
 
-function sessions() {
+function sessions(request: Request) {
   const secret = env("SESSION_SECRET");
   if (!secret) throw new Response(missingEnv(["SESSION_SECRET"]).join("\n"), { status: 503 });
   return createCookieSessionStorage({
-    cookie: { name: "__care", httpOnly: true, sameSite: "lax", path: "/", secrets: [secret], secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 30 },
+    cookie: { name: "__session", httpOnly: true, sameSite: "lax", path: "/", secrets: [secret], secure: new URL(request.url).protocol === "https:", maxAge: 60 * 60 * 24 * 30 },
   });
 }
 
 export async function signedIn(request: Request) {
-  const s = await sessions().getSession(request.headers.get("Cookie"));
+  const s = await sessions(request).getSession(request.headers.get("Cookie"));
   return s.get("in") === true;
 }
 
@@ -33,14 +33,14 @@ export async function requireIn(request: Request) {
 }
 
 export async function signIn(request: Request, next: string) {
-  const store = sessions();
+  const store = sessions(request);
   const s = await store.getSession(request.headers.get("Cookie"));
   s.set("in", true);
   return redirect(next.startsWith("/") ? next : "/", { headers: { "Set-Cookie": await store.commitSession(s) } });
 }
 
 export async function signOut(request: Request) {
-  const store = sessions();
+  const store = sessions(request);
   const s = await store.getSession(request.headers.get("Cookie"));
   return redirect("/login", { headers: { "Set-Cookie": await store.destroySession(s) } });
 }

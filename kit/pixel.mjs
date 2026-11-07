@@ -30,7 +30,7 @@ function noise(rand, n) {
   };
 }
 
-export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height = 180, dissolve = "", flip = false } = {}) {
+export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height = 180, dissolve = "", flip = false, props = "care", accent = "#2f8f83" } = {}) {
   const S = SCENES[scene] ?? SCENES.meadow;
   const W = (canvas.width = width), H = (canvas.height = height);
   const ctx = canvas.getContext("2d");
@@ -87,10 +87,14 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
         set(xx, yy, win ? (S.lights && rand() > 0.4 ? "#ffd98a" : S.town[2]) : col);
       }
       if (tall) for (let yy = hy - bh - tall - 4; yy < hy - bh - tall; yy++) set(x + Math.floor(bw / 2), yy, S.town[0]);
-      if (Math.abs(x - clinic) < 6) {
+      if (props !== "plain" && Math.abs(x - clinic) < 6) {
         const top = hy - 9, left = x;
         for (let yy = top; yy < hy; yy++) for (let xx = left; xx < left + 9; xx++) set(xx, yy, "#f4f1ea");
-        for (let i = -1; i <= 1; i++) { set(left + 4 + i, top + 3, "#d8433f"); set(left + 4, top + 3 + i, "#d8433f"); }
+        if (props === "learning") {
+          for (let yy = top - 7; yy < top; yy++) set(left + 1, yy, "#6b6b6b");
+          for (let i = 0; i < 3; i++) for (let k = 0; k <= 2 - i; k++) set(left + 2 + k, top - 7 + i, accent), set(left + 2 + k, top - 3 - i, accent);
+          for (let xx = left + 1; xx < left + 8; xx += 2) for (let yy = top + 2; yy < hy - 1; yy += 3) set(xx, yy, "#a9c2dc");
+        } else for (let i = -1; i <= 1; i++) { set(left + 4 + i, top + 3, "#d8433f"); set(left + 4, top + 3 + i, "#d8433f"); }
         x += 10;
       }
       x += bw + (rand() > 0.6 ? 1 : 0);
@@ -154,13 +158,24 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
   if (S.tree) tree(W * 0.86, H * 0.84, H * 0.42, 1);
   if (S.edges) { tree(W * 0.02, H * 1.02, H * 0.42, -1); tree(W * 0.99, H * 0.98, H * 0.38, 1); }
 
-  if (S.bag) {
+  const [ar, ag, ab] = hex(accent);
+  const shade = (k) => [ar * k, ag * k, ab * k].map((v) => Math.min(255, Math.round(v)));
+  if (S.bag && props === "care") {
     const bx = Math.round(W * 0.6), by = Math.round(H * 0.8), bw = Math.round(W * 0.07), bh = Math.round(bw * 0.62);
-    for (let y = by - 3; y < by; y++) for (let x = bx + bw * 0.3; x < bx + bw * 0.7; x++) if (y === by - 3 || x < bx + bw * 0.3 + 1 || x >= bx + bw * 0.7 - 1) set(x, y, "#3b2418");
-    for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) set(x, y, y === by ? "#a0523d" : x > bx + bw * 0.8 ? "#6e3226" : "#8a4232");
+    for (let y = by - 3; y < by; y++) for (let x = bx + bw * 0.3; x < bx + bw * 0.7; x++) if (y === by - 3 || x < bx + bw * 0.3 + 1 || x >= bx + bw * 0.7 - 1) set(x, y, shade(0.45));
+    for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) set(x, y, y === by ? shade(1.15) : x > bx + bw * 0.8 ? shade(0.7) : shade(0.9));
     const cx = bx + Math.floor(bw / 2), cy = by + Math.floor(bh / 2);
     for (let i = -2; i <= 2; i++) { set(cx + i, cy, "#f4f1ea"); set(cx, cy + i, "#f4f1ea"); }
     for (let x = bx + 1; x < bx + bw + 3; x++) set(x, by + bh, "#24451f");
+  }
+  if (S.bag && props === "learning") {
+    const bx = Math.round(W * 0.6), by = Math.round(H * 0.82), bw = Math.round(W * 0.07);
+    const books = [shade(0.9), "#e9b53a", "#f4f1ea", shade(0.65)];
+    books.forEach((c, i) => {
+      const y0 = by - i * 3, x0 = bx + (i % 2 ? 2 : 0), w = bw - (i % 2) * 3;
+      for (let y = y0; y < y0 + 3; y++) for (let x = x0; x < x0 + w; x++) set(x, y, y === y0 + 2 ? shade(0.4) : c);
+    });
+    for (let x = bx + 1; x < bx + bw + 3; x++) set(x, by + 3, "#24451f");
   }
 
   if (dissolve) {
@@ -178,6 +193,6 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
 export function paintAll(root = document) {
   for (const c of root.querySelectorAll("canvas[data-pixel]")) {
     const o = c.dataset;
-    paint(c, { scene: o.pixel, seed: Number(o.seed ?? 7), width: Number(o.w ?? 320), height: Number(o.h ?? 180), dissolve: o.dissolve ?? "", flip: o.flip === "true" });
+    paint(c, { scene: o.pixel, seed: Number(o.seed ?? 7), width: Number(o.w ?? 320), height: Number(o.h ?? 180), dissolve: o.dissolve ?? "", flip: o.flip === "true", props: o.props ?? "care", accent: o.accent ?? "#2f8f83" });
   }
 }

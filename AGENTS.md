@@ -1,6 +1,6 @@
 # Headstart product: agent guide
 
-This repo is a template for the private side of a healthcare startup: a signed-in app with a care assistant people can type to, talk to and show photos (rashes, pill bottles, handwriting). Every word it shows and every secret it needs is a blank in `blanks.json`. It will not build until each blank holds a real answer. Never type copy into a component: fill the blank.
+This repo is a template for the private side of a healthcare startup: a signed-in app with an assistant people can type to, talk to and show photos (a rash, a pill bottle, a worksheet, handwriting). Every word it shows and every secret it needs is a blank in `blanks.json`. It will not build until each blank holds a real answer. Never type copy into a component: fill the blank.
 
 ## The loop
 
