@@ -33,6 +33,7 @@ Or press **Use this template** on GitHub for your own copy.
 ./fill check                         # ready to build?
 ./fill sync                          # pull brand and links from the landing beside it
 ./fill contrast "#999" "#fff"        # WCAG + APCA, with the nearest passing fix
+./fill export answers.json     # save your answers (before pulling template updates)
 ./fill map                           # which file uses which blank
 ```
 

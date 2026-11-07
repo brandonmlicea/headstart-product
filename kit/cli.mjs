@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { createInterface } from "node:readline/promises";
 import { load, list, fill, check, sync, map, writeTokens, valueOf, validate } from "./blanks.mjs";
 import { parse, every, measure, fix } from "./color.mjs";
@@ -14,6 +14,7 @@ const HELP = `./fill                      walk the form in the terminal (prints 
 ./fill convert <color>       one color in every format
 ./fill contrast <text> <bg>  WCAG and APCA, with the nearest passing fix
 ./fill sync [--push]         pull brand.* and link.* from the paired site (or push them)
+./fill export [file]         save every filled answer (not secrets) as {"key": "value"} JSON
 ./fill map                   which file uses which blank, and the routes
 ./fill mcp                   start the MCP server on stdio`;
 
@@ -104,6 +105,12 @@ switch (cmd) {
   }
   case "sync": { const r = sync(site, flag("--push")); r.error ? console.log(r.error) : report(r); break; }
   case "map": show(map(site)); break;
+  case "export": {
+    const out = JSON.stringify(Object.fromEntries(Object.entries(site.form.blanks).filter(([, f]) => !f.env && f.value).map(([k, f]) => [k, f.value])), null, 2) + "
+";
+    if (rest[0]) { writeFileSync(rest[0], out); console.log(`saved ${rest[0]}`); } else process.stdout.write(out);
+    break;
+  }
   case "mcp": await import("./mcp.mjs"); break;
   case "help": case "--help": case "-h": console.log(HELP); break;
   default: console.log(`Unknown command ${cmd}\n\n${HELP}`); process.exit(1);

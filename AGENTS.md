@@ -28,6 +28,16 @@ Blanks under `env.*` are written to `.env` (git-ignored), never to `blanks.json`
 
 `pnpm dev` and `pnpm start` both read `.env` on every request, so a changed key takes effect without a restart. In production set the same names as environment variables instead. `SESSION_SECRET` is generated the first time anything is filled, including through the landing's pair. Until they are set, the sign-in page and the chat print exactly which blank is missing.
 
+## Taking template updates
+
+Answers live inside `blanks.json`, so keep them in an answers file too: `./fill export answers.json` (secrets stay in `.env`). To update:
+
+```bash
+./fill export answers.json
+git checkout -- blanks.json && git pull
+./fill --from answers.json && ./fill list    # fills what you had, then shows any new blanks
+```
+
 ## The pair
 
 The landing (`headstart-landing`) is meant to sit beside this folder (`../landing` or any sibling with a `blanks.json` whose `site` is `landing`). Filling any `brand.*` or `link.*` blank here fills it there too and rewrites both sites' color tokens. `./fill sync` pulls them from the pair, `./fill sync --push` sends them. MCP tools take `site: "this" | "pair" | "both"`.
