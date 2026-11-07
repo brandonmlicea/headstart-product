@@ -24,7 +24,20 @@ Blanks under `env.*` are written to `.env` (git-ignored), never to `blanks.json`
 | `env.model` | `AI_MODEL` | A chat model that also reads images |
 | `env.transcribe` | `AI_TRANSCRIBE_MODEL` | A speech-to-text model served at `/audio/transcriptions` |
 
-`pnpm dev` and `pnpm start` both read `.env` on every request, so a changed key takes effect without a restart. In production set the same names as environment variables instead. Until they are set, the chat prints exactly which blank is missing.
+`.env` is for your own computer only: `pnpm dev` loads it into the Workers runtime and restarts when it changes, and `pnpm start` serves the last build with the `.env` it was built with. The server reads every name through `env()` in `app/lib/env.server.ts`, which is `process.env` (Cloudflare fills it from the Worker's vars and secrets under `nodejs_compat`). On Cloudflare set them as secrets (below). Until they are set, the chat prints exactly which blank is missing.
+
+## Deploy (Cloudflare Workers)
+
+The app runs on Cloudflare Workers in production and in `pnpm dev` (`@cloudflare/vite-plugin`, entry `workers/app.ts`, config `wrangler.json`). Rename the Worker in `wrangler.json` (`name`) first; it becomes `https://<name>.<your-subdomain>.workers.dev`.
+
+```bash
+pnpm wrangler login                    # once
+pnpm run deploy                        # ./fill check, react-router build, wrangler deploy
+pnpm wrangler secret put AI_BASE_URL   # then AI_API_KEY, AI_MODEL, AI_TRANSCRIBE_MODEL
+pnpm wrangler secret bulk .env         # or send all four from .env at once, if .env holds the production values
+```
+
+Secrets take effect at once, with no redeploy. `./fill` writes `.env` and never touches Cloudflare. Set `link.landing` to the landing's deployed address before the last deploy. `global_fetch_strictly_public` in `wrangler.json` lets the app reach an AI API that is itself a Worker on your account.
 
 ## Welcome (onboarding)
 

@@ -4,3 +4,4 @@ allowBuilds:
   esbuild: true
   sharp: true
   "@tailwindcss/oxide": true
+  workerd: true

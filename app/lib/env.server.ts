@@ -1,5 +1,3 @@
-import { existsSync, readFileSync } from "node:fs";
-import { parseEnv } from "node:util";
 import { createCookie, redirect } from "react-router";
 import form from "../../blanks.json";
 
@@ -7,8 +5,7 @@ type Field = { ask: string; env?: string };
 const fields = Object.entries(form.blanks as Record<string, Field>).filter(([, f]) => f.env);
 
 export function env(name: string): string {
-  const file = existsSync(".env") ? (parseEnv(readFileSync(".env", "utf8")) as Record<string, string>) : {};
-  return (process.env[name] ?? file[name] ?? "").trim();
+  return (process.env[name] ?? "").trim();
 }
 
 export function missingEnv(names: string[]) {
