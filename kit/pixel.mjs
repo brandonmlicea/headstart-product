@@ -171,11 +171,12 @@ export function paint(canvas, { scene = "meadow", seed = 7, width = 320, height 
   if (S.bag && props === "learning") {
     const bx = Math.round(W * 0.6), by = Math.round(H * 0.82), bw = Math.round(W * 0.07);
     const books = [shade(0.9), "#e9b53a", "#f4f1ea", shade(0.65)];
+    const th = Math.max(4, Math.round(bw * 0.2));
     books.forEach((c, i) => {
-      const y0 = by - i * 3, x0 = bx + (i % 2 ? 2 : 0), w = bw - (i % 2) * 3;
-      for (let y = y0; y < y0 + 3; y++) for (let x = x0; x < x0 + w; x++) set(x, y, y === y0 + 2 ? shade(0.4) : c);
+      const y0 = by - i * th, x0 = bx + (i % 2 ? 2 : 0), w = bw - (i % 2) * 3;
+      for (let y = y0; y < y0 + th; y++) for (let x = x0; x < x0 + w; x++) set(x, y, y === y0 + th - 1 ? shade(0.4) : x === x0 + w - 2 && c !== "#f4f1ea" ? "#f4f1ea" : c);
     });
-    for (let x = bx + 1; x < bx + bw + 3; x++) set(x, by + 3, "#24451f");
+    for (let x = bx + 1; x < bx + bw + 3; x++) set(x, by + th, "#24451f");
   }
 
   if (dissolve) {
