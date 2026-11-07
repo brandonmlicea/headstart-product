@@ -1,7 +1,8 @@
 @import "tailwindcss";
-@import "@fontsource-variable/fraunces/wght.css";
-@import "@fontsource-variable/fraunces/wght-italic.css";
-@import "@fontsource-variable/dm-sans/wght.css";
+@import "@fontsource-variable/geist";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/instrument-serif/400.css";
 @import "./tokens.css";
 
 @theme inline {
@@ -10,36 +11,126 @@
   --color-raised: var(--hs-raised);
   --color-line: var(--hs-line);
   --color-ink: var(--hs-ink);
+  --color-body: var(--hs-body);
   --color-muted: var(--hs-muted);
+  --color-quiet: var(--hs-quiet);
+  --color-button: var(--hs-button);
+  --color-on-button: var(--hs-on-button);
   --color-accent: var(--hs-accent);
   --color-accent-ink: var(--hs-accent-ink);
   --color-accent-fill: var(--hs-accent-fill);
   --color-on-accent: var(--hs-on-accent);
   --color-focus: var(--hs-focus);
   --color-tone-1: var(--hs-tone-1);
+  --color-tone-1-ink: var(--hs-tone-1-ink);
   --color-tone-2: var(--hs-tone-2);
+  --color-tone-2-ink: var(--hs-tone-2-ink);
   --color-tone-3: var(--hs-tone-3);
+  --color-tone-3-ink: var(--hs-tone-3-ink);
   --color-tone-4: var(--hs-tone-4);
+  --color-tone-4-ink: var(--hs-tone-4-ink);
   --color-tone-5: var(--hs-tone-5);
-  --font-display: "Fraunces Variable", Georgia, serif;
-  --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
-  --text-h1: clamp(2.6rem, 1.6rem + 4.4vw, 5.25rem);
-  --text-h1--line-height: 1.04;
-  --text-h2: clamp(2.1rem, 1.5rem + 2.6vw, 3.75rem);
-  --text-h2--line-height: 1.06;
-  --text-h3: clamp(1.45rem, 1.25rem + 0.8vw, 2rem);
-  --text-h3--line-height: 1.12;
-  --text-lead: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
-  --text-lead--line-height: 1.5;
+  --color-tone-5-ink: var(--hs-tone-5-ink);
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --text-hero: clamp(2.25rem, 1.6rem + 2.4vw, 3rem);
+  --text-hero--line-height: 1.12;
+  --text-h2: clamp(1.9rem, 1.4rem + 1.8vw, 2.5rem);
+  --text-h2--line-height: 1.15;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.5;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.4;
+  --text-row: 0.875rem;
+  --text-row--line-height: 1.5;
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.5;
 }
 
 @layer base {
-  html, body { height: 100%; }
-  body { @apply bg-canvas text-ink font-sans antialiased; }
-  h1, h2, h3 { @apply font-display font-normal tracking-[-0.015em]; text-wrap: balance; }
-  em { font-style: italic; }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-canvas text-ink font-sans antialiased; font-weight: 400; letter-spacing: -0.005em; }
+  h1, h2, h3 { font-weight: 400; letter-spacing: -0.015em; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  em { font-style: normal; color: var(--hs-quiet); }
   ::selection { background: var(--hs-accent-fill); color: var(--hs-on-accent); }
-  :focus-visible { outline: 2px solid var(--hs-focus); outline-offset: 2px; border-radius: 8px; }
+  :focus-visible { outline: 2px solid var(--hs-focus); outline-offset: 3px; border-radius: 8px; }
+}
+
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hs-muted);
+}
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding: 0 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  &:active { transform: translateY(1px) scale(0.99); }
+}
+
+@utility btn-dark {
+  color: var(--hs-on-button);
+  border: 1px solid color-mix(in oklab, var(--hs-button) 88%, black);
+  background: linear-gradient(color-mix(in oklab, var(--hs-button) 80%, white), var(--hs-button));
+  box-shadow: 0 0 0 1px oklch(0.37 0 0 / 0.12), inset 0 2px 0 oklch(1 0 0 / 0.24), inset 0 -0.5px 2px oklch(0 0 0 / 0.25), 0 2px 8px oklch(0 0 0 / 0.03), 0 3px 4px oklch(0 0 0 / 0.16);
+  &:hover { filter: brightness(1.12); }
+}
+
+@utility btn-light {
+  color: var(--hs-ink);
+  background: var(--hs-raised);
+  border: 1px solid light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.09));
+  box-shadow: inset 0 2px 0 light-dark(oklch(1 0 0 / 0.6), oklch(1 0 0 / 0.06)), 0 1px 2px oklch(0 0 0 / 0.08), 0 3px 8px oklch(0 0 0 / 0.06);
+  &:hover { filter: brightness(0.98); }
+}
+
+@utility btn-glass {
+  color: white;
+  background: oklch(0.32 0.1 255 / 0.32);
+  border: 1px solid oklch(1 0 0 / 0.3);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: inset 0 0 0.4px 1.5px oklch(1 0 0 / 0.2), 0 2px 6px oklch(0 0 0 / 0.08);
+  &:hover { background: oklch(0.32 0.1 255 / 0.45); }
+}
+
+@utility row {
+  background: color-mix(in oklab, var(--hs-raised) 60%, transparent);
+  border: 1px solid light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.1));
+  border-radius: 10px;
+}
+
+@utility frame {
+  background: color-mix(in oklab, var(--hs-raised) 70%, transparent);
+  border: 1px solid light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.09));
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 light-dark(oklch(1 0 0 / 0.7), oklch(1 0 0 / 0.05)), 0 1px 2px oklch(0 0 0 / 0.04), 0 12px 40px -12px oklch(0 0 0 / 0.12);
+}
+
+@utility dots {
+  background-image: radial-gradient(circle, light-dark(oklch(0 0 0 / 0.12), oklch(1 0 0 / 0.1)) 1px, transparent 1.2px);
+  background-size: 14px 14px;
+}
+
+@utility pixel {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+
+@layer base {
+  html, body { height: 100%; }
   * { scrollbar-width: thin; scrollbar-color: var(--hs-line) transparent; }
 }
 

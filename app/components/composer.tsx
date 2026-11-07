@@ -4,7 +4,7 @@ import { Icon } from "./icon";
 
 type Props = { placeholder: string; busy: boolean; onSend: (text: string, images: string[]) => void };
 
-const tool = "grid size-9 place-items-center rounded-lg text-muted transition hover:bg-ink/5 hover:text-ink disabled:opacity-40";
+const tool = "grid size-8 place-items-center rounded-md text-muted transition hover:bg-ink/5 hover:text-ink disabled:opacity-40";
 
 export function Composer({ placeholder, busy, onSend }: Props) {
   const [text, setText] = useState("");
@@ -79,7 +79,7 @@ export function Composer({ placeholder, busy, onSend }: Props) {
         onSubmit={(e) => { e.preventDefault(); submit(); }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); void addFiles(e.dataTransfer.files); }}
-        className="rounded-2xl border border-line bg-raised shadow-[0_8px_30px_-12px_rgb(0_0_0/0.18)] transition focus-within:border-accent-ink/50"
+        className="rounded-[12px] border border-line bg-raised shadow-[inset_0_1px_0_oklch(1_0_0/0.7),0_1px_3px_oklch(0_0_0/0.05),0_12px_32px_-16px_oklch(0_0_0/0.18)] transition focus-within:border-accent-ink/50"
       >
         {images.length > 0 && (
           <div id="composer-images" className="flex gap-2 overflow-x-auto px-3 pt-3">
@@ -102,7 +102,7 @@ export function Composer({ placeholder, busy, onSend }: Props) {
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit(); } }}
           placeholder={placeholder}
           aria-label="Message"
-          className="block max-h-56 w-full resize-none bg-transparent px-4 pb-2 pt-4 outline-none placeholder:text-muted"
+          className="block max-h-56 w-full resize-none bg-transparent px-4 pb-1 pt-3.5 text-[15px] text-ink outline-none placeholder:text-muted"
         />
         <div id="composer-bar" className="flex items-center gap-1 p-2">
           <input ref={files} type="file" accept="image/*" multiple hidden onChange={(e) => { void addFiles(e.target.files); e.target.value = ""; }} />
@@ -113,16 +113,16 @@ export function Composer({ placeholder, busy, onSend }: Props) {
             id="composer-mic"
             type="button"
             onClick={record}
-            className={rec ? "flex h-9 items-center gap-2 rounded-lg bg-accent-fill px-3 text-sm text-on-accent" : tool}
+            className={rec ? "flex h-8 items-center gap-2 rounded-md bg-tone-4 px-2.5 text-[13px] text-tone-4-ink" : tool}
             title={rec ? "Stop and write it down" : "Talk instead of typing"}
             aria-label={rec ? "Stop recording" : "Record your voice"}
           >
             <Icon name={rec ? "stop" : "mic"} className={rec ? "size-4" : "size-5"} />
             {rec && <span className="tabular-nums">0:{String(seconds).padStart(2, "0")}</span>}
           </button>
-          {note && <span className="truncate px-2 text-xs text-muted" role="status">{note}</span>}
-          <button id="composer-send" disabled={busy || (!text.trim() && !images.length)} className="ml-auto grid size-9 place-items-center rounded-xl bg-accent-fill text-on-accent transition hover:brightness-110 disabled:opacity-40" aria-label="Send">
-            <Icon name="send" />
+          {note && <span className="truncate px-2 text-[12px] text-muted" role="status">{note}</span>}
+          <button id="composer-send" disabled={busy || (!text.trim() && !images.length)} className="btn btn-dark ml-auto grid size-8 place-items-center p-0 disabled:opacity-40" aria-label="Send">
+            <Icon name="send" className="size-4" />
           </button>
         </div>
       </form>

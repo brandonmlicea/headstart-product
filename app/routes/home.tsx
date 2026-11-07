@@ -20,21 +20,26 @@ export default function Home() {
   const composer = (
     <>
       <Composer placeholder={`Ask ${name}, talk, or add a photo`} busy={!!chat?.busy} onSend={onSend} />
-      <p id="chat-disclaimer" className="mx-auto mt-2 max-w-2xl px-2 text-center text-xs text-muted">{b("assistant.disclaimer")}</p>
+      <p id="chat-disclaimer" className="mx-auto mt-2 max-w-2xl px-2 text-center text-[12px] text-muted">{b("assistant.disclaimer")}</p>
     </>
   );
 
   if (!chat)
     return (
-      <main id="page-home" className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10">
-        <h1 className="max-w-[18ch] text-center text-h2">
+      <main id="page-home" className="dots flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10">
+        <p className="eyebrow">{name}</p>
+        <h1 className="mt-5 max-w-[20ch] text-center text-h2 text-ink">
           {ems(b("assistant.greeting")).map((part, i) => (i % 2 ? <em key={i}>{part}</em> : part))}
         </h1>
-        <p className="mt-4 max-w-md text-center text-muted">{id ? "This chat is not on this device. Start a new one below." : b("assistant.intro")}</p>
+        <p className="mt-4 max-w-md text-center text-body text-body">{id ? "This chat is not on this device. Start a new one below." : b("assistant.intro")}</p>
         <div className="mt-10 w-full">{composer}</div>
-        <div id="starters" className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-2">
-          {STARTERS.map((s) => (
-            <button key={s} onClick={() => onSend(s, [])} className="rounded-full border border-line px-4 py-2 text-sm transition hover:bg-surface">{s}</button>
+        <div id="starters" className="mx-auto mt-6 grid w-full max-w-2xl gap-2">
+          {STARTERS.map((s, i) => (
+            <button key={s} onClick={() => onSend(s, [])} className="row flex items-center gap-3 px-4 py-3 text-left transition hover:bg-raised">
+              <span className="w-6 font-mono text-[11px] text-muted">1.{i + 1}</span>
+              <span className="flex-1 text-row font-medium text-ink">{s}</span>
+              <span className="text-muted" aria-hidden="true">→</span>
+            </button>
           ))}
         </div>
       </main>
@@ -42,8 +47,9 @@ export default function Home() {
 
   return (
     <main id="page-chat" className="flex min-h-0 flex-1 flex-col">
-      <header id="chat-title" className="flex h-12 shrink-0 items-center border-b border-line px-6 text-sm">
-        <span className="truncate">{chat.title}</span>
+      <header id="chat-title" className="flex h-12 shrink-0 items-center gap-2 border-b border-line px-5 text-[13px]">
+        <span className="font-mono text-[10px] text-muted">::</span>
+        <span className="truncate text-ink">{chat.title}</span>
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <Thread messages={chat.messages} name={name} busy={!!chat.busy} />

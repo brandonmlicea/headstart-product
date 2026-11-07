@@ -29,7 +29,7 @@
     },
     "brand.color": {
       "ask": "Brand color",
-      "hint": "Any CSS color: hex, rgb(), hsl(), oklch(), oklab(), lab(), lch(), color(srgb ...) or color(display-p3 ...). Shared with the landing; every other color is derived from it and checked for AA contrast.",
+      "hint": "Any CSS color: hex, rgb(), hsl(), oklch(), oklab(), lab(), lch(), color(srgb ...) or color(display-p3 ...). Shared with the landing; it becomes the accent, the rest stays warm neutral, and every pair is checked for AA contrast.",
       "kind": "color",
       "value": ""
     },
@@ -79,7 +79,7 @@
     },
     "assistant.greeting": {
       "ask": "Empty chat headline",
-      "hint": "Shown above the composer before the first message. Wrap the one or two words to set in italics in *stars*.",
+      "hint": "Shown above the composer and on the sign-in page. Wrap the second half in *stars* to set it in the lighter grey.",
       "kind": "text",
       "max": 60,
       "value": ""

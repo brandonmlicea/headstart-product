@@ -41,13 +41,24 @@ export function validate(f, value) {
   if (!v) return `${f.ask} is REQUIRED`;
   if (f.kind !== "secret" && FILLER.test(v)) return `"${v}" is generic filler. Write the real ${f.ask}`;
   if (v.toLowerCase() === f.ask.toLowerCase()) return `Write the real ${f.ask}, not its label`;
-  if (f.max && v.length > f.max) return `${f.ask} must be at most ${f.max} characters (got ${v.length})`;
+  if (f.max && f.kind !== "list" && v.length > f.max) return `${f.ask} must be at most ${f.max} characters (got ${v.length})`;
   if (f.min && v.length < f.min) return `${f.ask} must be at least ${f.min} characters (got ${v.length})`;
   if (f.kind === "color") { try { parse(v); } catch (e) { return `${f.ask}: ${e.message}`; } }
   if (f.kind === "format" && !FORMATS.includes(v)) return `${f.ask} must be one of ${FORMATS.join(", ")}`;
   if (f.kind === "choice" && !f.options.includes(v)) return `${f.ask} must be one of ${f.options.join(", ")}`;
   if (f.kind === "email" && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v)) return `${f.ask} must be an email address`;
   if (f.kind === "url" && !/^https?:\/\/[^\s]+$/i.test(v)) return `${f.ask} must start with http:// or https://`;
+  if (f.kind === "list") {
+    const items = v.split(",").map((s) => s.trim()).filter(Boolean);
+    const [lo, hi] = f.items ?? [1, 99];
+    if (items.length < lo || items.length > hi) return `${f.ask} needs ${lo === hi ? lo : `${lo} to ${hi}`} items separated by commas (got ${items.length})`;
+    const long = items.find((s) => f.itemMax && s.length > f.itemMax);
+    if (long) return `"${long}" is longer than ${f.itemMax} characters`;
+    const odd = f.letters && items.find((s) => !/^[a-z ]+$/i.test(s));
+    if (odd) return `"${odd}" may hold letters and spaces only`;
+    const filler = items.find((s) => FILLER.test(s));
+    if (filler) return `"${filler}" is generic filler. Write the real ${f.ask}`;
+  }
   if (f.kind === "phone" && (v.match(/\d/g) || []).length < 7) return `${f.ask} must be a phone number`;
   return null;
 }

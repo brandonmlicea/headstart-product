@@ -1,56 +1,59 @@
 import { parse, oklch, fromOklch, fix, passes, measure, format, FORMATS } from "./color.mjs";
 
-const TONES = [
-  { dh: 52, light: [0.87, 0.075], dark: [0.4, 0.06] },
-  { dh: 0, light: [0.82, 0.08], dark: [0.38, 0.06] },
-  { dh: -24, light: [0.79, 0.075], dark: [0.37, 0.06] },
-  { dh: 78, light: [0.83, 0.06], dark: [0.38, 0.05] },
-  { dh: 158, light: [0.87, 0.028], dark: [0.38, 0.03] },
-];
+const LARGE = { wcag: 3, apca: 45 };
+const WARM = 106;
+const TONES = [247, 148, 85, 25];
 
-const WHITE = parse("#fff");
+const grey = (L, C = 0.004) => fromOklch(L, C, WARM);
 
-function lift(fill, ink, step) {
+function lift(fill, ink, step, goal) {
   let [L, C, H] = oklch(fill);
-  while (!passes(ink, fill) && L + step >= 0 && L + step <= 1) { L += step; fill = fromOklch(L, C, H); }
+  while (!passes(ink, fill, goal) && L + step >= 0 && L + step <= 1) { L += step; fill = fromOklch(L, C, H); }
   return fill;
 }
 
-function scheme(brand, dark, darkInk) {
+function scheme(brand, dark) {
   const [, bc, H] = oklch(brand);
-  const tint = (L, C) => fromOklch(L, Math.min(C, bc), H);
   const s = dark
-    ? { canvas: tint(0.19, 0.012), surface: tint(0.235, 0.016), raised: tint(0.27, 0.014), line: tint(0.34, 0.02), ink: tint(0.96, 0.01), muted: tint(0.78, 0.02) }
-    : { canvas: tint(0.975, 0.012), surface: tint(0.945, 0.018), raised: tint(0.995, 0.004), line: tint(0.885, 0.02), ink: tint(0.25, 0.035), muted: tint(0.5, 0.03) };
-  s.muted = fix(fix(s.muted, s.surface), s.canvas);
+    ? { canvas: grey(0.19), surface: grey(0.225), raised: grey(0.255), line: grey(0.32), ink: grey(0.95), body: grey(0.86), muted: grey(0.74), quiet: grey(0.6), button: grey(0.93), "on-button": grey(0.2) }
+    : { canvas: grey(0.9693), surface: grey(0.945), raised: grey(0.995, 0.002), line: grey(0.89), ink: grey(0.2435, 0), body: grey(0.38, 0.002), muted: grey(0.5), quiet: grey(0.62), button: grey(0.3, 0), "on-button": grey(0.99, 0) };
+  for (const bg of ["surface", "raised", "canvas"]) { s.body = fix(s.body, s[bg]); s.muted = fix(s.muted, s[bg]); }
+  s.quiet = fix(s.quiet, s.canvas, LARGE);
   s.accent = brand;
-  s["accent-ink"] = fix(fix(brand, s.surface), s.canvas);
+  s["accent-ink"] = fix(fix(fix(brand, s.surface), s.raised), s.canvas);
+  const white = parse("#fff"), black = grey(0.2, 0);
   let fill = brand;
-  const onFill = passes(WHITE, fill) ? WHITE : passes(darkInk ?? s.ink, fill) ? darkInk ?? s.ink : null;
-  if (onFill) s["on-accent"] = onFill;
-  else { fill = lift(fill, WHITE, -0.01); s["on-accent"] = WHITE; }
+  if (passes(white, fill)) s["on-accent"] = white;
+  else if (passes(black, fill)) s["on-accent"] = black;
+  else { fill = lift(fill, white, -0.01); s["on-accent"] = white; }
   s["accent-fill"] = fill;
-  TONES.forEach((t, i) => {
-    const [L, C] = dark ? t.dark : t.light;
-    s[`tone-${i + 1}`] = lift(fromOklch(L, Math.min(C, bc + 0.02), H + t.dh), s.ink, dark ? -0.01 : 0.01);
+  const tones = [...TONES, H];
+  tones.forEach((h, i) => {
+    const c = i === 4 ? Math.min(bc, 0.07) : 0.06;
+    s[`tone-${i + 1}`] = lift(dark ? fromOklch(0.34, c, h) : fromOklch(0.92, c * 0.8, h), s.ink, dark ? -0.01 : 0.01);
+    s[`tone-${i + 1}-ink`] = fix(dark ? fromOklch(0.82, 0.12, h) : fromOklch(0.5, 0.13, h), s[`tone-${i + 1}`]);
   });
   s.focus = s["accent-ink"];
   return s;
 }
 
 export const PAIRS = [
-  ["ink", "canvas"], ["ink", "surface"], ["ink", "raised"], ["muted", "canvas"], ["muted", "surface"],
-  ["accent-ink", "canvas"], ["accent-ink", "surface"], ["on-accent", "accent-fill"],
-  ...TONES.map((_, i) => ["ink", `tone-${i + 1}`]),
+  ["ink", "canvas"], ["ink", "surface"], ["ink", "raised"],
+  ["body", "canvas"], ["body", "surface"], ["body", "raised"],
+  ["muted", "canvas"], ["muted", "surface"], ["muted", "raised"],
+  ["quiet", "canvas", "large"],
+  ["accent-ink", "canvas"], ["accent-ink", "surface"], ["accent-ink", "raised"],
+  ["on-accent", "accent-fill"], ["on-button", "button"],
+  ...[1, 2, 3, 4, 5].flatMap((i) => [["ink", `tone-${i}`], [`tone-${i}-ink`, `tone-${i}`]]),
 ];
 
 export function palette(brandColor, fmt = "oklch") {
   if (!FORMATS.includes(fmt)) throw new Error(`Format must be one of ${FORMATS.join(", ")}`);
   const brand = parse(brandColor);
-  const light = scheme(brand, false), dark = scheme(brand, true, light.ink);
+  const light = scheme(brand, false), dark = scheme(brand, true);
   const report = [];
   for (const [name, s] of [["light", light], ["dark", dark]])
-    for (const [t, b] of PAIRS) report.push({ scheme: name, text: t, background: b, ...measure(s[t], s[b]) });
+    for (const [t, b, size] of PAIRS) report.push({ scheme: name, text: t, background: b, size: size ?? "body", ...measure(s[t], s[b], size ? LARGE : undefined) });
   const out = (s) => Object.fromEntries(Object.entries(s).map(([k, v]) => [k, format(v, fmt)]));
   return { light: out(light), dark: out(dark), report, pass: report.every((r) => r.pass) };
 }

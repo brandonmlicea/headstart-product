@@ -4,7 +4,7 @@ import { palette } from "../../kit/palette.mjs";
 import { FORMATS } from "../../kit/color.mjs";
 import { b } from "~/lib/blanks";
 
-type Row = { scheme: string; text: string; background: string; wcag: number; apca: number; pass: boolean };
+type Row = { scheme: string; text: string; background: string; size: string; wcag: number; apca: number; pass: boolean };
 
 export function loader({ request }: Route.LoaderArgs) {
   const saved = b("brand.format");
@@ -49,17 +49,18 @@ export default function Brand({ loaderData: d }: Route.ComponentProps) {
         ))}
         <section id="brand-contrast" className="mt-12">
           <h2 className="text-h3">Contrast {d.pass ? "passes" : "fails"} AA</h2>
-          <p className="mt-2 text-sm text-muted">Every text pair, measured in WCAG 2 (goal 4.5:1) and APCA (goal Lc 60).</p>
+          <p className="mt-2 text-sm text-body">Every text pair, measured in WCAG 2 and APCA. Body text needs 4.5:1 and Lc 60; quiet is for large headings only, at 3:1 and Lc 45.</p>
           <div className="mt-4 overflow-x-auto rounded-xl border border-line">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface text-muted">
-                <tr><th className="p-3 font-normal">Scheme</th><th className="p-3 font-normal">Text on background</th><th className="p-3 font-normal">WCAG</th><th className="p-3 font-normal">APCA</th><th className="p-3 font-normal">AA</th></tr>
+                <tr><th className="p-3 font-normal">Scheme</th><th className="p-3 font-normal">Text on background</th><th className="p-3 font-normal">Goal</th><th className="p-3 font-normal">WCAG</th><th className="p-3 font-normal">APCA</th><th className="p-3 font-normal">AA</th></tr>
               </thead>
               <tbody>
                 {d.report.map((r, i) => (
                   <tr key={i} className="border-t border-line">
                     <td className="p-3">{r.scheme}</td>
                     <td className="p-3">{r.text} on {r.background}</td>
+                    <td className="p-3 font-mono text-[12px]">{r.size === "large" ? "3:1 · Lc 45" : "4.5:1 · Lc 60"}</td>
                     <td className="p-3 tabular-nums">{r.wcag}:1</td>
                     <td className="p-3 tabular-nums">Lc {r.apca}</td>
                     <td className="p-3">{r.pass ? "Pass" : "Fail"}</td>

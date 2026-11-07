@@ -2,7 +2,7 @@
 
 **Speed up your AI startup.** The private, signed-in side of a healthcare startup: a care assistant people can type to, talk to and show photos, filled in like a form from the terminal or through MCP.
 
-- React Router 8 (framework mode, server rendered), Tailwind 4, TypeScript.
+- React Router 8 (framework mode, server rendered), Tailwind 4, TypeScript, in the same calm warm-neutral style as the landing: a serif wordmark, dark glossy buttons, bordered rows, a framed chat panel and a pixel-art sign-in.
 - Multimodal from the first run: text, voice in (record, then transcribe), voice out (Read aloud), and photos or handwriting by upload, camera, paste or drop. Streams replies from any OpenAI-compatible API (OpenAI, Groq, OpenRouter, Together, DeepInfra, Fireworks, your own).
 - Passcode sign-in with a signed cookie, chats kept on the device, a `/brand` page that shows every color token in every format with its contrast table.
 - Every word and secret is a blank in `blanks.json`. An empty blank renders as `REQUIRED: Assistant name`, and `pnpm build` refuses to run until every blank holds a real answer. Secrets go to `.env`, never into git.

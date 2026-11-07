@@ -57,7 +57,10 @@ Chats live in the browser (`app/lib/chats.ts`, localStorage). Swap in a database
 - `brand.color` takes any CSS color: hex, `rgb()`, `hsl()`, `oklch()`, `oklab()`, `lab()`, `lch()`, `color(srgb ...)`, `color(display-p3 ...)`; `brand.format` picks how tokens are written.
 - `app/tokens.css` is generated (light and dark); never edit it, run `./fill tokens`. Every text pair passes WCAG 4.5:1 and APCA Lc 60. `/brand` shows the palette in every format with its contrast table.
 - `./fill contrast "<text>" "<bg>"` measures a pair and gives the nearest passing fix; `./fill convert "<color>"` prints every format.
-- Tailwind names: `bg-canvas`, `bg-surface`, `bg-raised`, `border-line`, `text-ink`, `text-muted`, `text-accent-ink`, `bg-accent-fill` with `text-on-accent`, `bg-tone-1` to `bg-tone-5`. Never add a raw color. Type: `font-display`, `font-sans`, `text-h1`, `text-h2`, `text-h3`.
+- The app is warm neutral (canvas, ink and greys stay the same for every brand); the brand color is the accent. The landing uses the same tokens, fonts and pieces, so both read as one product.
+- Tailwind names: `bg-canvas`, `bg-surface`, `bg-raised`, `border-line`; text `text-ink`, `text-body`, `text-muted`; `text-quiet` only for headings 24px and up; `text-accent-ink`, `bg-accent-fill` with `text-on-accent`; status tints `bg-tone-1..5` with `text-tone-1-ink..5-ink`. Never add a raw color. Type: `font-sans` (Geist), `font-mono` (IBM Plex Mono), `font-serif` (the wordmark); sizes `text-hero`, `text-h2`, `text-h3`, `text-body`, `text-row`.
+- Ready-made pieces: `btn btn-dark`, `btn btn-light`, `row`, `frame`, `dots`, `eyebrow`. Pixel-art scenes come from `kit/pixel.mjs` through `app/components/pixel.tsx` (`<Pixel scene="field" />`; scenes meadow, sky, field, grass, dawn, noon, dusk, night).
+- `*stars*` in `assistant.greeting` set the second half in the lighter grey.
 
 ## Map
 
